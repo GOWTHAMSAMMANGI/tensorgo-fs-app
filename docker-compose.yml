@@ -1,0 +1,41 @@
+version: '3.7'
+
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    depends_on:
+      - elasticsearch
+      - logstash
+    logging:
+      driver: "json-file"
+  
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.3
+    environment:
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+      - cluster.name=elk-cluster
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+  
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.17.3
+    environment:
+      - LOGSTASH_PIPELINE_FILE=./logstash/pipeline.conf
+      - LOGSTASH_INPUT_HOST=app:5000
+      - LOGSTASH_OUTPUT_HOST=elasticsearch:9200
+    volumes:
+      - ./logstash/pipeline.conf:/usr/share/logstash/pipeline
+    depends_on:
+      - elasticsearch
+ 
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.3
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
