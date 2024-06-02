@@ -1,5 +1,5 @@
 # Stage 1: Build the React frontend
-FROM node:18-alpine AS build
+FROM node:18.20.3-alpine AS build
 
 WORKDIR /app
 
@@ -13,7 +13,7 @@ RUN npm run build
 COPY backend/requirements.txt ./ 
 
 # Stage 2: Build the Python backend and final image
-FROM python:3.9-slim 
+FROM python:3.9.19-alpine 
 
 WORKDIR /app
 
