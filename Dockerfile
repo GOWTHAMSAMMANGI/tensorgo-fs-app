@@ -10,7 +10,7 @@ COPY frontend/src ./frontend/src
 RUN npm run build
 
 # Copy requirements.txt to the build context of this stage
-COPY backend/requirements.txt ./backend/ 
+COPY backend/requirements.txt ./ 
 
 # Stage 2: Build the Python backend and final image
 FROM python:3.9-slim 
@@ -18,7 +18,7 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Now copy from the build context of this stage
-COPY --from=build-stage /app/backend/requirements.txt ./backend/ 
+COPY --from=build /app/backend/requirements.txt ./backend/ 
 
 RUN pip install -r ./backend/requirements.txt 
 
