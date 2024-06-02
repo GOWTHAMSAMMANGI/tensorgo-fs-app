@@ -7,7 +7,8 @@ WORKDIR /app
 COPY frontend/package.json frontend/package-lock.json ./frontend/
 
 # Clear npm cache and install dependencies
-RUN cd frontend && npm cache clean --force && npm ci
+RUN cd frontend && npm config set strict-ssl false && npm config set registry https://registry.npmjs.org/ && npm ci || npm ci --no-optional
+
 
 # Copy the rest of the frontend source code
 COPY frontend/src ./frontend/src
