@@ -18,7 +18,7 @@ FROM python:3.9.19-alpine
 WORKDIR /app
 
 # Now copy from the build context of this stage
-COPY --from=build /app/backend/requirements.txt ./backend/ 
+COPY --from=build /app/requirements.txt ./backend/ 
 
 RUN pip install -r ./backend/requirements.txt 
 
