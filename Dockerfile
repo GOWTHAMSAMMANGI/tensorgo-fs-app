@@ -1,5 +1,5 @@
 # Stage 1: Build the React frontend
-FROM node:16-alpine AS build
+FROM node:18.20.3-alpine AS build
 
 WORKDIR /app
 
