@@ -1,27 +1,35 @@
 # Stage 1: Build the React frontend
-FROM node:18-alpine AS build-stage
+FROM node:18-alpine AS build
 
 WORKDIR /app
 
-COPY frontend/package.json ./
-
+COPY frontend/package.json frontend/package-lock.json ./
 RUN npm install
 
 COPY frontend/src ./frontend/src
 RUN npm run build
+
+# Copy requirements.txt to the build context of this stage
+COPY backend/requirements.txt ./backend/ 
 
 # Stage 2: Build the Python backend and final image
 FROM python:3.9-slim 
 
 WORKDIR /app
 
-# Copy requirements.txt and install backend dependencies HERE
-COPY backend/requirements.txt ./backend/ 
+# Now copy from the build context of this stage
+COPY --from=build-stage /app/backend/requirements.txt ./backend/ 
+
 RUN pip install -r ./backend/requirements.txt 
 
 COPY backend/app.py ./backend/
 
 # Copy the built frontend from the previous stage
-COPY --from=build-stage /app/build /app/frontend 
+COPY --from=build /app/build /app/frontend 
 
-CMD ["python", "-u", "backend/app.py"]
+EXPOSE 5000
+
+CMD ["python", "-u", "/app/backend/app.py"]
+
+
+
