@@ -1,14 +1,23 @@
 # Stage 1: Build the React frontend
-FROM node:18.20.3-alpine AS build
+FROM node:16-alpine AS build
 
 WORKDIR /app
 
+# Copy package.json and package-lock.json to the working directory
 COPY frontend/package.json frontend/package-lock.json ./frontend/
-RUN cd frontend && npm install
 
+# Clear npm cache and install dependencies
+RUN cd frontend && npm cache clean --force && npm ci
+
+# Copy the rest of the frontend source code
 COPY frontend/src ./frontend/src
 COPY frontend/public ./frontend/public
+
 WORKDIR /app/frontend
+
+# Set environment variable to fix OpenSSL issue
+ENV NODE_OPTIONS=--openssl-legacy-provider
+
 RUN npm run build
 
 # Stage 2: Build the Python backend and final image
