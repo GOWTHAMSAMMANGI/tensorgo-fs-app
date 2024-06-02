@@ -13,7 +13,7 @@ RUN npm run build
 # Stage 2: Build the Python backend and final image
 FROM python:3.9-slim 
 
-WORKDIR /app
+WORKDIR /app/backend
 
 COPY backend/requirements.txt ./backend/
 RUN pip install -r ./backend/requirements.txt
